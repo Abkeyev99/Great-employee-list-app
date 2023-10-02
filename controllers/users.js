@@ -45,8 +45,7 @@ const login = async (req, res) => {
  * @desc Регистрация
  * @access Public
  */
-const register = async (req, res, next) => {
-    try {
+const register = async (req, res) => {
         const {email, password, name} = req.body;
 
         if (!email || !password || !name) {
@@ -64,13 +63,13 @@ const register = async (req, res, next) => {
         }
 
         const salt = await brypt.genSalt(10);
-        const hashedPassord = await brypt.hash(password, salt);
+        const hashedPassword = await brypt.hash(password, salt);
 
         const user = await prisma.user.create({
             data: {
                 email,
                 name,
-                password: hashedPassord
+                password: hashedPassword
             }
         });
 
@@ -86,9 +85,6 @@ const register = async (req, res, next) => {
         } else {
             return res.status(400).json({message: 'Не удалось создать пользователя'})
         }
-    } catch {
-        res.status(500).json({message: 'Что-то пошло не так'})
-    }
 }
 
 /**
